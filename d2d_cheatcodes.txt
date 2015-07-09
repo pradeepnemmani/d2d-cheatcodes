@@ -1,0 +1,317 @@
+GraphDatabaseService Connection
+GraphDatabaseService graphDatabase=graphDatabase = new GraphDatabaseFactory()
+.newEmbeddedDatabase("C:\\Users\\praneeth\\Desktop\\neo4j-community-2.0.1\\data\\graph.db");
+try (Transaction tx = gds.beginTx()) {
+Label mailLabel = DynamicLabel.label("Email");
+Label userLabel = DynamicLabel.label("User");
+Node mailNode = gds.createNode(mailLabel);
+String mid = UUID.randomUUID().toString();
+mailNode.setProperty("mid", mid);
+mailNode.setProperty("to", mail.getTo());
+mailNode.setProperty("subject", mail.getSubject());
+mailNode.setProperty("body", mail.getBody());
+mailNode.setProperty("entryDate", mail.getDateOfEnter());
+mailNode.setProperty("entryTime", System.currentTimeMillis());
+ResourceIterable<Node> userNode = gds.findNodesByLabelAndProperty(
+userLabel, "userId", id);
+System.out.println(id);
+System.out.println(mid);
+System.out.println(mail.getTo() + " is added into database ");
+for (Node entry : userNode) {
+Relationship rs = mailNode.createRelationshipTo(entry,
+ERelation.EMAIL_DETAILS);
+if (rs != null) {
+System.out
+.println(" mail stored into database and relation created with user ");
+} else {
+System.out.println("mail not stored");
+}
+}
+tx.success();
+}
+Queue<Mail> mails = new LinkedList<>();
+ExecutionEngine ee = new ExecutionEngine(gds);
+ExecutionResult er = ee
+.execute("MATCH(u:User{userId:'"
++ userId
++ "'})<-[r:EMAIL_DETAILS]-(e:Email) RETURN e.mid,e.to,e.subject,e.body,e.entryTime,e.entryDate ORDER BY e.entrytime ASC SKIP"
++ "\t" + skip + "\t" + "LIMIT" + "\t" + limit + " ");
+System.out.println("skip===" + skip + "\n" + "limit===" + limit);
+for (Map<String, Object> entry : er) {
+Mail mail = new Mail();
+mail.setTo(entry.get("e.to").toString());
+mail.setSubject(entry.get("e.subject").toString());
+mail.setBody(entry.get("e.body").toString());
+mail.setId(entry.get("e.mid").toString());
+mails.add(mail);
+}
+--------------------------------------------------------------------------------------------------------------------------------
+Sql Database Connection
+Class.forName("com.mysql.jdbc.Driver");
+return DriverManager.getConnection("jdbc:mysql://localhost:3306/wecare","root","tiger");
+ Connection con =DBManager.getConnection();
+PreparedStatement st=con.prepareStatement("insert user values(?,?,?,?,?)");
+}
+--------------------------------------------------------------------------------------------------------------------------------
+Schema Compiler
+C://sotwares/d2d/project srs > xjc -p  target folder  xsd file
+--------------------------------------------------------------------------------------------------------------------------------
+Schema Generater
+C://sotwares/d2d/project srs > schemagen       -d       targetfolder     javafile package
+--------------------------------------------------------------------------------------------------------------------------------
+Xml Schema
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+           targetNamespace="http://www.school.com/schemas"
+           elementFormDefault="qualified"
+           xmlns="http://www.school.com/schemas"
+           jxb:version="2.0">
+--------------------------------------------------------------------------------------------------------------------------------
+Xml Schema Instance
+<organization xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.d2d.com/schemas/org organization.xsd"
+xmlns="http://www.d2d.com/schemas/org">
+</organization>
+--------------------------------------------------------------------------------------------------------------------------------
+Marshaling  java-xml file
+--------------------------------------------------------------------------------------------------------------------------------
+ try {
+            SchemaFactory sf = SchemaFactory
+                    .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            Schema schema = sf.newSchema(new File(
+                    "C:\\Users\\praneeth\\.IntelliJIdea13\\IdeaProjects\\test\\resume.xsd"));
+            JAXBContext jax = JAXBContext.newInstance("target");
+            Marshaller marshell = jax.createMarshaller();
+            marshell.setSchema(schema);
+            marshell.setProperty(marshell.JAXB_FORMATTED_OUTPUT, true);
+            marshell.marshal(resume, System.out);
+            marshell.marshal(resume,new File("D:\\softwares\\New folder (3)\\resume.xml"));
+        } catch (JAXBException jax) {
+            jax.printStackTrace();
+        } catch (SAXException sax) {
+            sax.printStackTrace();
+            // TODO: handle exception
+        }
+    }  
+--------------------------------------------------------------------------------------------------------------------------------
+Un-Marshaling  xml - java
+try {
+            Unmarshaller unMarshaller = jax.createUnmarshaller();
+            Schema schema=TestResume2.getTrainingSchema(TestResume2.xsdPath);
+            unMarshaller.setSchema(schema);
+            Object object= unMarshaller.unmarshal(new File(xmlFile));
+            if(object instanceof Resume)
+            {
+                resume=(Resume) object;
+            }
+        }
+        catch (JAXBException e)
+        {
+            e.printStackTrace();
+        }
+        return resume;
+--------------------------------------------------------------------------------------------------------------------------------
+Package Info
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.resume.com/schemas/org", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+package target;
+--------------------------------------------------------------------------------------------------------------------------------
+XSLT
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:sch="http://www.school.com/schemas"
+                version="1.0">
+<xsl:template match="/sch:school">
+        <html>
+            <head>
+                <link rel="stylesheet" href="school.css" type="text/css"/>
+                <title>My Formatted xml</title>
+            </head>
+            <body>
+                <h1>
+                    <xsl:value-of select="sch:school_name"/>
+                </h1>
+                <h3>
+                    <xsl:apply-templates select="sch:address"/>
+                </h3>
+                <hr/>
+                <xsl:apply-templates select="sch:members"></xsl:apply-templates>
+              <xsl:apply-templates select="sch:board_members"></xsl:apply-templates>
+            </body>
+        </html>
+    </xsl:template>
+<xsl:template match="sch:address">
+        <address>
+            <xsl:value-of select="sch:street"/>
+            <br/>
+            <xsl:value-of select="sch:city"/>
+            <br/>
+            <xsl:value-of select="sch:state"/>
+            <br/>
+            <xsl:value-of select="sch:country"/>
+            <br/>
+        </address>
+    </xsl:template>
+--------------------------------------------------------------------------------------------------------------------------------
+spring-config.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation=
+                                        "http://www.springframework.org/schema/beans
+                                          http://www.springframework.org/schema/beans/spring-beans.xsd
+                                          http://www.springframework.org/schema/context
+                                           http://www.springframework.org/schema/context/spring-context.xsd">
+    <!--<context:annotation-config />-->
+    <!--<context:component-scan base-package="foo.bar"/>-->
+   
+ <bean name="personService" id="personService" class="foo.bar.services.PersonService"></bean>
+    <bean name="addressService" id="addressService" class="foo.bar.services.AddressService"></bean>
+    <bean name="tuitionService" id="tuitionService" class="foo.bar.services.TuitionService"></bean>
+    <bean name="praneeth" class="foo.bar.models.Person" autowire="byType">
+        <property name="firstName" value="praneeth"></property>
+        <property name="middleName" value="kumar"></property>
+        <property name="lastName" value="nemmani"></property>
+        <property name="id" value="1"></property>
+        <property name="address" ref="praneethaddress"></property>
+    </bean>
+    <bean name="indu" class="foo.bar.models.Person" autowire="constructor">
+        <!--<constructor-arg value="indu"></constructor-arg>-->
+        <!--<constructor-arg value="MN"></constructor-arg>-->
+        <!--<constructor-arg value="LM"></constructor-arg>-->
+    <property name="firstName" value="indu"></property>
+--------------------------------------------------------------------------------------------------------------------------------
+spring-config.xml:AOP
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+                                     http://www.springframework.org/schema/beans                                                                                   http://www.springframework.org/schema/beans/spring-beans.xsd
+                                     http://www.springframework.org/schema/context                                                                                http://www.springframework.org/schema/context/spring-context.xsd
+                                     http://www.springframework.org/schema/util                                                                                       http://www.springframework.org/schema/util/spring-util.xsd
+                                      http://www.springframework.org/schema/aop                                                                                      http://www.springframework.org/schema/aop/spring-aop.xsd">
+<bean id="aop" class="foo.bar.Logging.Logging"></bean>
+<aop:aspectj-autoproxy> </aop:aspectj-autoproxy>
+<aop:config proxy-target-class="false">
+               <aop:aspect ref="aop">
+                               <aop:before  method="logEntry" pointcut="execution(*                                                                                             foo.bar.services.TuitionService.createTuition(..))"></aop:before>
+        
+                                <aop:around method="timeTaken" pointcut="execution(*                                                                       foo.bar.services.TuitionService.createTuition(..))"></aop:around>
+                   </aop:aspect>
+</aop:config>
+--------------------------------------------------------------------------------------------------------------------------------
+Spring-ConfigurableFile:
+@Component
+@org.springframework.beans.factory.annotation.Configurable
+@Configuration
+@ComponentScan(basePackages = "foo.bar")
+@EnableAspectJAutoProxy(proxyTargetClass = false)
+public class Configurable {
+    @Bean
+    public PersonService personService()
+    {
+        System.out.println("Inside Bean Creation.......");
+        return  new PersonService();
+    }
+@Bean
+public GraphDatabaseService  graphDatabaseService()
+{
+System.out.println("Establishing connection to the database...");
+GraphDatabaseService gds = new GraphDatabaseFactory().newEmbeddedDatabase( "/tmp/orgdb" );
+System.out.println("Established connection to the database!!!");
+return gds;
+}
+@Bean
+public ExecutionEngine executionEngine()
+{
+return new ExecutionEngine( graphDatabaseService() );
+}
+}
+--------------------------------------------------------------------------------------------------------------------------------
+@TX:-
+@Retention(RetentionPolicy.RUNTIME)
+@Target(value = {ElementType.METHOD})
+public @interface Tx {
+}
+--------------------------------------------------------------------------------------------------------------------------------
+@Aspect
+@Aspect
+@Component
+public class Aspects {
+    public Aspects() {
+        System.out.println("Annotation Bean Created...");
+    }
+    @Pointcut(value = "@annotation(foo.bar.annotations.Tx)" )
+    public void beforeAnnot()
+    {
+    }
+    @Pointcut( value = "@annotation(foo.bar.annotations.Tx)")
+    public void aroundAnnt()
+    {
+    }
+//    @Pointcut( value = "args(str1,str2,str3,str4,str5,str6)" )
+//    public void logWithStringArgument( String str1, String str2, String str3, String str4, String str5, String str6 )
+//    {
+//
+//    }
+//    @Before( value = "logWithStringArgument()")
+//    public void logEntry(JoinPoint joinPoint) {
+//        Long entryTime = System.currentTimeMillis();
+//        System.out.println("Entering " + joinPoint.getSignature() + "entryTime In milliseconds==" + entryTime);
+//    }
+    @Before( value = "beforeAnnot()")
+    public void logEntry(JoinPoint joinPoint) {
+        Long entryTime = System.currentTimeMillis();
+        System.out.println("Entering " + joinPoint.getSignature() + "entryTime In milliseconds==" + entryTime);
+    }
+    @Around(value = "aroundAnnt()")
+    public Object timeTaken(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        Long entryTime = System.currentTimeMillis();
+        Object o = proceedingJoinPoint.proceed();
+        Long endTime = System.currentTimeMillis();
+;
+        System.out.println("Execution of method - " + proceedingJoinPoint.getSignature() + " took - " + (endTime - entryTime) + " milliseconds.");
+        
+        return o;
+    }
+}
+--------------------------------------------------------------------------------------------------------------------------------
+Configurable:
+AnnotationConfigApplicationContext context=new AnnotationConfigApplicationContext("foo.bar.configurable");
+  ClassPathXmlApplicationContext context=new ClassPathXmlApplicationContext("spring-config.xml"");
+      ApplicationContext context=new ClassPathXmlApplicationContext("spring-config.xml");
+ApplicationContext context=new ClassPathXmlApplicationContext("spring-config.xml"");
+--------------------------------------------------------------------------------------------------------------------------------
+Neo4j Aspect For Transaction:
+@Autowired
+private GraphDatabaseService graphDatabaseService;
+@Around( value = "wrapInTxBlockPointcut()" )
+public Object wrapInTxBlock( ProceedingJoinPoint pjp ) throws Throwable
+{
+System.out.println( "Adding tx block for : " + pjp.getSignature() );
+Object returnVal = null;
+Transaction tx = graphDatabaseService.beginTx();
+try
+{
+System.out.println( "--- Inside tx block" );
+returnVal = pjp.proceed();
+tx.success();
+System.out.println( "--- Commit tx" );
+}
+catch ( Throwable ex )
+{
+System.out.println( "--- Failing tx" );
+tx.failure();
+throw ex;
+}
+finally
+{
+System.out.println( "--- Closing tx" );
+tx.close();
+}
+return returnVal;
+}
