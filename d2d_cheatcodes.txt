@@ -1,3 +1,10 @@
+
+Create a file named jaxp.properties (if it doesn't exist) under /path/to/jdk1.8.0/jre/lib and then write this line in it:
+
+javax.xml.accessExternalSchema = all
+
+
+
 GraphDatabaseService Connection
 GraphDatabaseService graphDatabase=graphDatabase = new GraphDatabaseFactory()
 .newEmbeddedDatabase("C:\\Users\\praneeth\\Desktop\\neo4j-community-2.0.1\\data\\graph.db");
